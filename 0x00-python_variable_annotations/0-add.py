@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
- '''#function to add two floats numbers'''
+ '''function to add two floats numbers'''
 
 def add(a: float, b: float) -> float:
     '''
