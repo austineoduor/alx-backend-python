@@ -24,5 +24,5 @@ async def wait_n(n: int, max_delay: int) -> List[float]:
     for i in asyncio.as_completed(result):
         li = await i
         lists.append(li)
-    await asyncio.sleep(max_delay)
+    # await asyncio.sleep(max_delay)
     return lists
