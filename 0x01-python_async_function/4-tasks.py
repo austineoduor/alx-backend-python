@@ -21,6 +21,7 @@ async def task_wait_n(n: int, max_delay: int) -> List[float]:
     for i in asyncio.as_completed(result):
         li = await i
         lists.append(li)
-    # await asyncio.sleep(max_delay)
-    #x = random.sample(lists, len(lists))
+    ''' await asyncio.sleep(max_delay)
+    x = random.sample(lists, len(lists))
+    '''
     return lists
