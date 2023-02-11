@@ -24,6 +24,10 @@ class TestAccessNestedMap(unittest.TestCase):
        ({"a": 1}, ("a", "b"))
     ])
     def test_access_nested_map_exception(self, map, path):
+        '''
+        about memoization and familiarize yourself with the
+        utils.memoize decorator
+        '''
         self.assertRaises(KeyError, access_nested_map, map, path)
 
 
