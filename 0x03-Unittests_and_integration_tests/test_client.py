@@ -68,7 +68,8 @@ class TestGithubOrgClient(unittest.TestCase):
 )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """
-    TESTCASE
+    TESTCAS
+    The HTTPError carries the Response object with it:
     """
     @classmethod
     def setUpClass(cls):
