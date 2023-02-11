@@ -67,7 +67,9 @@ class TestGithubOrgClient(unittest.TestCase):
     TEST_PAYLOAD
 )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
-    """ TESTCASE """
+    """
+    TESTCASE 
+    """
     @classmethod
     def setUpClass(cls):
         """ It is part of the unittest.TestCase API
