@@ -10,7 +10,7 @@ def stream_users():
     generator function that yields user_data row at a time
     '''
     conn = cnx.connect_to_prodev()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     query = "SELECT * FROM user_data"
     try:
         cursor.execute(query)

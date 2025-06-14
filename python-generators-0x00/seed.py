@@ -124,12 +124,3 @@ def insert_data(connection, data):
             else:
                 print("No connection")
                 exit(1)
-
-
-
-if __name__ == "__main__":
-    cnn = connect_db()
-    create_database(cnn)
-    con = connect_to_prodev()
-    create_table(con)
-    insert_data(con, "user_data.csv")
