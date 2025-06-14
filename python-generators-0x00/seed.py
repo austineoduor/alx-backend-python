@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+import csv
 import mysql.connector as mcnx
 from mysql.connector import errorcode
 
@@ -8,11 +10,12 @@ TABLES = {}
 
 TABLES["user_data"] = ( 
 "CREATE TABLE IF NOT EXISTS `user_data`("
-"user_id INT AUTO_INCREMENT,"
+"user_id BINARY(40),"
 "name VARCHAR(100) NOT NULL,"
 "email VARCHAR(100) NOT NULL,"
 "age DECIMAL NOT NULL, "
-"PRIMARY KEY (`user_id`)"
+"PRIMARY KEY (`user_id`),"
+"UNIQUE INDEX(`user_id`)"
 
 ")ENGINE=InnoDB")
 
@@ -24,7 +27,7 @@ def connect_db():
     try:
         cnx = mcnx.connect(user='root', password='kali')
         if cnx.is_connected():
-            print("successful connected to mysql-sever")
+            #print("successful connected to mysql-sever")
             return cnx
     except mcnx.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -43,7 +46,7 @@ def create_database(connection):
     cursor = connection.cursor()
     try:
         dbnx = cursor.execute("CREATE DATABASE IF NOT EXISTS {} DEFAULT CHARACTER SET utf8;".format(DBNAME))
-        print("connected to mysql server and created ALX_prodev database")
+        #print("connected to mysql server and created ALX_prodev database")
         return dbnx
     except mcnx.Error as err:
         print(err)
@@ -57,7 +60,7 @@ def connect_to_prodev():
     try :
         cnx = mcnx.connect(**db_config)
         if cnx.is_connected():
-            print("connected to ALX_prodev")
+           # print("connected to ALX_prodev")
             return cnx
     except mcnx.Error as err:
         '''if err.errno == errorcode.ER.BAD_DB_ERROR:'''
@@ -77,7 +80,7 @@ def create_table(connection):
             #print("Using: {}".format(DBNAME))
             try:
                 cursor.execute(table_description)
-                print("created the table")
+              #  print("created the table")
             except mcnx.Error as err:
                 if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
                     print("Already present {}".format(err))
@@ -90,18 +93,37 @@ def create_table(connection):
 
 
 def insert_data(connection, data):
-    ''' insert data to the ALX_prodev database in user_data table'''
+    '''
+    insert data to the ALX_prodev database in user_data table
+    '''
 
-    user_data = "user_data.csv"
-    with user_adata as data:
-
-
-    '''if connection.is_connected():
-        cursor = connection.cursor()
-        try:
-    else:
-        print("No connection")
-        exit(1)'''
+    with open(data, 'r') as file:
+        reader = csv.reader(file)
+        lines = (line for line in reader)
+        file_lines =  (s for s in lines)
+        cols = next(file_lines)
+        user_data = [dict(zip(cols, v)) for v in file_lines]
+        for user in user_data:
+            userdata= {'name': user['name'],
+                       'email': user['email'],
+                       'age':user['age']
+                       }
+            data_desc = (
+                    "INSERT INTO user_data""(user_id, name, email, age)"
+                    "VALUES""(uuid(),%(name)s, %(email)s, %(age)s)"
+                    )
+            if connection.is_connected():
+                cursor = connection.cursor()
+                try:
+                    cursor.execute(data_desc, userdata)
+                    mcnx.commit()
+                   # print("data inserted successfully")
+                except mcnx.Error as err:
+                    print(err)
+                    exit(1)
+            else:
+                print("No connection")
+                exit(1)
 
 
 
@@ -110,3 +132,4 @@ if __name__ == "__main__":
     create_database(cnn)
     con = connect_to_prodev()
     create_table(con)
+    insert_data(con, "user_data.csv")

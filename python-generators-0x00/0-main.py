@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 seed = __import__('seed')
 
@@ -18,7 +18,7 @@ if connection:
         result = cursor.fetchone()
         if result:
             print(f"Database ALX_prodev is present ")
-        cursor.execute(f"SELECT * FROM user_data LIMIT 5;")
+        cursor.execute(f"SELECT * FROM user_data LIMIT 10;")
         rows = cursor.fetchall()
         print(rows)
         cursor.close()
