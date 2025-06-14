@@ -37,5 +37,5 @@ def batch_processing(batch_size):
             else:
                 print(users)
     except Exception as err:
-        print(err)
+        print("Encountered Error\(s\): {}".format(err))
         exit(1)
