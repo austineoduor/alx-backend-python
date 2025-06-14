@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 '''quering the user_data'''
+
+import mysql.connector as mcnx
+
 cnx = __import__('seed')
 
 def stream_users():
@@ -13,10 +16,11 @@ def stream_users():
         cursor.execute(query)
         for row in cursor.fetchall():
             yield row
-    except conn.Error as err:
+    except mcnx.Error as err:
         print("Error occured {}".format(err))
         exit(1)
-    cursor.close()
-    conn.close()
+    finally:
+        cursor.close()
+        conn.close()
 
 
