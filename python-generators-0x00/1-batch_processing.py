@@ -33,10 +33,10 @@ def batch_processing(batch_size):
     lim_age = 25
     try:
         for users in islice(stream_users_in_batches(batch_size), batch_size):
-            if users['age'] <= lim_age:
+            if users['age'] > lim_age:
                 continue
             else:
-                print(users)
+                return users
     except Exception as err:
         print("Encountered Error(s): {}".format(err))
         exit(1)
