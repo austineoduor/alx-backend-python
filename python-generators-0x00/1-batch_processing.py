@@ -11,14 +11,18 @@ def stream_users_in_batches(batch_size):
     cursor = conn.cursor()
     query = "SELECT * FROM user_data"
     try:
-        cursor.execute(query)
-        for row in cursor.fetchmany(batch_size):
-            yield row
+        while True:
+            cursor.execute(query)
+            for row in cursor.fetchmany(batch_size):
+                if not row:
+                    break
+                else:
+                    yield row
+        cursor.close()
     except mcnx.Error as err:
         print("Error occured {}".format(err))
         exit(1)
     finally:
-        cursor.close()
         conn.close()
         
         
