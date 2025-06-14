@@ -116,7 +116,7 @@ def insert_data(connection, data):
                 cursor = connection.cursor()
                 try:
                     cursor.execute(data_desc, userdata)
-                    mcnx.commit()
+                    connection.commit()
                    # print("data inserted successfully")
                 except mcnx.Error as err:
                     print(err)
