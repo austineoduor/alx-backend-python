@@ -1,13 +1,15 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 user_data = __import__("2-lazy_paginate").paginate_users
 
 
 def stream_user_ages():
+    print("calling ...")
     page_size = 50
     offset = 0
     data = user_data.paginate_users(page_size, offset)
     if data:
+
         for user in data:
             print(user['age'])
             yield user('age')
@@ -17,9 +19,14 @@ def stream_user_ages():
 def calculating_average_age():
     while True:
         data = stream_user_ages()
-        if not data:
+        print(data)
+        rows = (row for row in data)
+        if rows:
+            print(rows)
+
+        else:
             break
         
         
 if __name__ == '__main__':
-    stream_user_ages()
+    calculating_average_age()
