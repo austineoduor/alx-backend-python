@@ -10,10 +10,9 @@ def stream_user_ages():
     while True:
         data = user_data.paginate_users(page_size, offset)
         if data:
-
-            for user in data:
-                print(user['age'])
-                yield user('age')
+            for _ in data:
+                print(data['age'])
+                #yield user('age')
         else:
             print("No data found")
             exit(1)
