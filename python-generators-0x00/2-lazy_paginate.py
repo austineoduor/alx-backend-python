@@ -18,8 +18,7 @@ def lazy_paginate(page_size):
         data = paginate_users(page_size, offset)
         if data:
             offset += page_size
-            for row in data:
-                yield row
+            yield data
         else:
             print("data found")
             exit(1)
