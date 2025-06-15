@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 import sys
 lazy_paginator = __import__('2-lazy_paginate').lazy_pagination
 
