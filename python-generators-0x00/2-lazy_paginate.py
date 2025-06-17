@@ -14,9 +14,12 @@ def paginate_users(page_size, offset):
 def lazy_paginate(page_size):
     '''retrieves rows from from offset to Limit'''
     offset = 0
-    data = paginate_users(page_size, offset)
-    while len(data) != 0:
+    while True:
+        data = paginate_users(page_size, offset)
+        if not data:
+            break  # Exit loop if no more data is returned
         print(data)
         print(offset)
         offset += page_size
-        data = paginate_users(page_size, offset)
+        if len(data) < page_size: # check if we're at the end of the data
+            break
