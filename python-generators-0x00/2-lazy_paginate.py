@@ -14,10 +14,9 @@ def paginate_users(page_size, offset):
 def lazy_paginate(page_size):
     '''retrieves rows from from offset to Limit'''
     offset = 0
-    for rows in paginate_users(page_size, offset):
-        if rows:
-            offset += page_size
-            yield data
-        else:
-            print("data found")
-           raise BrokenPipeError
+    data = paginate_users(page_size, offset)
+    while len(data) != 0:
+        print(data)
+        print(offset)
+        offset += page_size
+        data = paginate_users(page_size, offset)
