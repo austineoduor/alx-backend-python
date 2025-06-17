@@ -18,8 +18,7 @@ def lazy_paginate(page_size):
         data = paginate_users(page_size, offset)
         if not data:
             break  # Exit loop if no more data is returned
-        print(data)
-        print(offset)
+        else:
+            yield data
         offset += page_size
-        if len(data) < page_size: # check if we're at the end of the data
-            break
+        data = []

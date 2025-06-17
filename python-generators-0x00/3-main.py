@@ -6,7 +6,8 @@ lazy_paginator = __import__('2-lazy_paginate').lazy_paginate
 try:
     for page in lazy_paginator(100):
         for user in page:
-            print(user)
+            pass
+            #print(user)
 
 except BrokenPipeError:
     sys.stderr.close()

@@ -4,27 +4,34 @@ user_data = __import__("2-lazy_paginate")
 
 
 def stream_user_ages():
-    print("runing ..")
-    page_size = 100 
+    page_size = 100
+    n = 0
     while True:
-        data = user_data.lazy_paginate(page_size)
-        if data:
-            for user in data:
-                yield user['age']
+        users = user_data.lazy_paginate(page_size)
+        ln = len(users)
+        if users and n <= ln:
+            n + 1
+            for user in users:
+                print(user)
+                yield user
         else:
             #print("No data found")
-            return False
+            break
 
 
 def calculate_average_age():
+    size = 0
+    total_age = 0
     while True:
         data = [ d for d in stream_user_ages()]
         if data:
-            #size += len(data)
-            #print(size,'\n')
-            print(data)
+            total += sum(data['age'])
+            size = len(data)
+
         else:
             break
+    avg = total_age/size
+    print("Average age of users: {}".format(avg))
         
         
 if __name__ == '__main__':
