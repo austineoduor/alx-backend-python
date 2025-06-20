@@ -1,36 +1,26 @@
 #!/usr/bin/env python3
 
-user_data = __import__("2-lazy_paginate")
+user_data = __import__("1-batch_processing")
 
 
 def stream_user_ages():
     page_size = 100
-    n = 0
-    while True:
-        users = user_data.lazy_paginate(page_size)
-        ln = len(users)
-        if users and n <= ln:
-            n + 1
-            for user in users:
-                print(user)
-                yield user
-        else:
-            #print("No data found")
-            break
+    users = user_data.stream_users_in_batches(page_size)
+    for user in users:
+        yield user['age']
 
 
 def calculate_average_age():
-    size = 0
-    total_age = 0
-    while True:
-        data = [ d for d in stream_user_ages()]
-        if data:
-            total += sum(data['age'])
-            size = len(data)
+    total_users = 0
+    total_age = 0 
+    avg = 0
+    user_age = stream_user_ages()
+    for age in user_age:
+        total_users += 1
+        total_age += age
 
-        else:
-            break
-    avg = total_age/size
+    avg = total_age/total_users
+
     print("Average age of users: {}".format(avg))
         
         

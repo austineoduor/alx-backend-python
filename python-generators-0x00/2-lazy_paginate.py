@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 seed = __import__('seed')
 
 
@@ -17,8 +17,10 @@ def lazy_paginate(page_size):
     while True:
         data = paginate_users(page_size, offset)
         if not data:
-            break  # Exit loop if no more data is returned
+            return 0  # Exit loop if no more data is returned
         else:
             yield data
         offset += page_size
-        data = []
+
+if __name__ == '__main__':
+    lazy_paginate(100)
