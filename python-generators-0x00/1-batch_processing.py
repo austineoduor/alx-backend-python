@@ -1,42 +1,50 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 '''batch processing'''
+
 from itertools import islice
 import mysql.connector as mcnx
 
 cnx = __import__('seed')
 
 def stream_users_in_batches(batch_size):
-    '''fetches row in batches of batch_size'''
+    '''
+    fetches row in batches of batch_size
+    '''
     conn = cnx.connect_to_prodev()
     cursor = conn.cursor(dictionary=True)
     query = "SELECT * FROM user_data"
     try:
+        cursor.execute(query)
         while True:
-            cursor.execute(query)
-            for row in cursor.fetchmany(batch_size):
-                if not row:
-                    break
-                else:
-                    yield row
+            rows = cursor.fetchmany(batch_size)
+            if not rows:
+                cursor.close()
+                break
+            else:
+                for user in rows:
+                    yield user
         cursor.close()
     except mcnx.Error as err:
         print("Error occured {}".format(err))
-        exit(1)
     finally:
         conn.close()
-        
-        
+
 def batch_processing(batch_size):
     '''
-    process the rows fetched and filter users over the age of 25
+    processes user data for age greater than 25
     '''
-    lim_age = 25
+    age_lim = 25
     try:
-        for users in islice(stream_users_in_batches(batch_size), batch_size):
-            if users['age'] > lim_age:
-                continue
+        for user in stream_users_in_batches(batch_size):
+            if user:
+                if user['age'] > age_lim:
+                    print(user)
+                else:
+                    continue
             else:
-                return users
+                break
     except Exception as err:
-        print("Encountered Error(s): {}".format(err))
-        exit(1)
+        print("Caught an error {}".format(err))
+
+if __name__ == '__main__':
+    batch_processing(10)
