@@ -1,11 +1,11 @@
-##Project Description
+## Project Description
 This project focuses on mastering Python decorators to enhance database operations in Python applications.
 Through hands-on tasks, learners will create custom decorators to log queries, handle connections,
 manage transactions, retry failed operations, and cache query results.
 The tasks are designed to simulate real-world challenges, providing learners with an in-depth understanding of 
 python’s capabilities for dynamic and reusable code in database management.
 
-##Learning Objectives
+## Learning Objectives
 
 By completing these tasks, professional developers will:
 
@@ -16,7 +16,7 @@ By completing these tasks, professional developers will:
 	Build resilience into database operations by implementing retry mechanisms for transient errors.
 	Apply best practices in database interaction for scalable and maintainable Python applications.
 
-##Requirements
+## Requirements
 
 Python 3.8 or higher installed.
 
@@ -25,7 +25,7 @@ Python 3.8 or higher installed.
 	Familiarity with Git and GitHub for project submission.
 	Strong problem-solving skills and attention to detail.
 
-Key Highlights
+## Key Highlights
 
 Task 0: Logging Database Queries
 
