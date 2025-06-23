@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sqlite3
 
 def create_users_table(db_name="users.db"):
@@ -77,7 +79,7 @@ if __name__ == "__main__":
 
     # Optional: Verify the data
     try:
-        conn = sqlite3.connect("test.db")
+        conn = sqlite3.connect("users.db")
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM users")
