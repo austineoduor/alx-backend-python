@@ -4,7 +4,6 @@ import sqlite3
 import functools
 
 def with_db_connection(func):
-    
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         conn = None
@@ -24,20 +23,19 @@ def with_db_connection(func):
     
 def transactional(func):
     @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            conn = kwargs.get('conn')
-            if not conn:
-                raise ValueError("Database connection 'conn' not found in keyword arguments.  Ensure with_db_connection decorator is applied first.")
-            
-            try:
-                result = func(*args, **kwargs)
-                conn.commit()
-                return result
-            except Exception as e:
-                print(f"Transaction failed, rolling back: {e}")
-                conn.rollback()
-                raise  # Re-raise the exception to propagate it
-        return wrapper
+    def wrapper(*args, **kwargs):
+        conn = kwargs.get('conn')
+        if not conn:
+            raise ValueError("Database connection 'conn' not found in keyword arguments.  Ensure with_db_connection decorator is applied first.")
+        try:
+            result = func(*args, **kwargs)
+            conn.commit()
+            return result
+        except Exception as e:
+            print(f"Transaction failed, rolling back: {e}")
+            conn.rollback()
+            raise  # Re-raise the exception to propagate it
+    return wrapper
 
 @with_db_connection 
 @transactional 
