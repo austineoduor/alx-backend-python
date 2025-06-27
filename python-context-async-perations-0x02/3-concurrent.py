@@ -24,7 +24,7 @@ async def async_fetch_older_users():
     except aiosqlite.Error as err:
         print(f"Error occured: {err}")
 
-async def main():
+async def fetch_concurrently():
     res = await asyncio.gather(
         async_fetch_users(),
         async_fetch_older_users()
@@ -32,4 +32,4 @@ async def main():
     print(res)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(fetch_concurrently())
