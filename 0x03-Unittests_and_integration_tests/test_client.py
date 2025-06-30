@@ -40,11 +40,12 @@ class TestGithubOrgClient(unittest.TestCase):
     @patch("client.get_json", return_value=[{"name": "holberton"}])
     def test_public_repos(self, mock_get):
         """
-        Use @patch as a decorator to mock get_json and make it return a payload of your choice.
-        Use patch as a context manager to mock GithubOrgClient._public_repos_url and return a value of your choice.
+        Use @patch as a decorator to mock get_json and make
+        it return a payload of your choice.
+        Use patch as a context manager to mock GithubOrgClient.
+        _public_repos_url and return a value of your choice.
         Test that the list of repos is what you expect from the chosen payload.
         Test that the mocked property and the mocked get_json was called once.
-        
         """
         with patch.object(GithubOrgClient,
                           "_public_repos_url",
