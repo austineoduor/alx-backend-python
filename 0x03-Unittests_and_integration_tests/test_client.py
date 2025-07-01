@@ -103,4 +103,4 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         """ method to test the public_repos with the argument license """
         test_class = GithubOrgClient.public_repos(license=license)
         apache_repos = test_class.public_repos(license="apache-2.0")
-        self.assertEqual(sorted(apache_repos), sorted(self.apache2_repos)) 
+        self.assertEqual(sorted(apache_repos), sorted(self.apache2_repos))
