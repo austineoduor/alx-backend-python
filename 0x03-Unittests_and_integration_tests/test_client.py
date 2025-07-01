@@ -6,7 +6,7 @@ from unittest.mock import patch, PropertyMock, Mock
 from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 from fixtures import TEST_PAYLOAD
-from urllib.error import HTTPError
+from requests import HTTPError
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -75,14 +75,17 @@ class TestGithubOrgClient(unittest.TestCase):
 )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """
-    TESTCAS
+    TESTCASE
     The HTTPError carries the Response object with it:
     """
     @classmethod
     def setUpClass(cls):
-        """ It is part of the unittest.TestCase API
-        method to return example payloads found in the fixtures """
-        cls.get_patcher = patch('requests.get', side_effect=HTTPError)
+        """
+        It is part of the unittest.TestCase API
+        method to return example payloads found in the fixtures
+        """
+        cls.get_patcher = patch('requests.get')
+        cls.mock_get() = cls.get_patcher.start()
 
     @classmethod
     def tearDownClass(cls):
@@ -93,9 +96,10 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def test_public_repos(self):
         """ method to test GithubOrgClient.public_repos """
         test_class = GithubOrgClient("holberton")
+        repos=test_class.public_repos()
         assert True
 
     def test_public_repos_with_license(self):
         """ method to test the public_repos with the argument license """
-        test_class = GithubOrgClient("holberton")
+        test_class = GithubOrgClient.public_repos(license=license)
         assert True
