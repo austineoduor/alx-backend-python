@@ -1,15 +1,15 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import Conversation, Message
+from .models import User, Conversation, Message
 
-User = get_user_model()  # Important: Use get_user_model()
+User = get_user_model()  # or Important: Use get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name') # Added more fields
-        read_only_fields = ('id',)  # Prevent ID modification
+        fields = ('user_id', 'username', 'email', 'first_name', 'phone_number', 'password', 'last_name')
+        read_only_fields = ('user_id',)  # Prevent ID modification
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -17,8 +17,8 @@ class MessageSerializer(serializers.ModelSerializer):
     # conversation = serializers.PrimaryKeyRelatedField(read_only=True) #Or StringRelatedField(read_only=True)
     class Meta:
         model = Message
-        fields = ('id', 'conversation', 'sender', 'text', 'timestamp')
-        read_only_fields = ('id', 'sender', 'timestamp') #timestamp is often set automatically
+        fields = ('conversation', 'sender', 'message_body', 'send_at')
+        read_only_fields = ('message_id', 'sender', 'send_at') #timestamp is often set automatically
 
 
 class ConversationSerializer(serializers.ModelSerializer):
@@ -27,8 +27,8 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Conversation
-        fields = ('id', 'participants', 'messages', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'created_at', 'updated_at')
+        fields = ('conversation_id', 'participants', 'messages', 'created_at', 'updated_at')
+        read_only_fields = ('conversation_id', 'created_at', 'updated_at')
 
 
 #Serializers for creating conversations and Messages
@@ -47,15 +47,8 @@ class CreateConversationSerializer(serializers.ModelSerializer):
 
 
 class CreateMessageSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Message
-        fields = ('conversation', 'sender')
-
-
-class CreateMessageSerializer(serializers.ModelSerializer):
     text = serializers.CharField(required=True) #added to ensure text is a required field
 
     class Meta:
         model = Message
-        fields = ('conversation', 'text')
+        fields = '__all__'
