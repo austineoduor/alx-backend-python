@@ -75,7 +75,7 @@ class Conversation(models.Model):
     """
     Represents a conversation between multiple users.
     """
-    Conversation_id = models.UUIDField(
+    conversation_id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4, 
         editable=False)
