@@ -9,7 +9,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     permission_classes = [permissions.IsAuthenticated] #Restrict to authenticated users
-
+    #filters,
     def get_serializer_class(self):
         if self.action == 'create':
             return CreateConversationSerializer

@@ -4,7 +4,7 @@ from .models import User, Conversation, Message
 
 User = get_user_model()  # or Important: Use get_user_model()
 
-
+#["serializers.SerializerMethodField()", "serializers.ValidationError"]
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
