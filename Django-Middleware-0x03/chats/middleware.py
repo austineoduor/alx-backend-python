@@ -10,7 +10,7 @@ class RequestLoggingMiddleware:
         self.get_response = get_response
         self.logger = logging.getLogger(self.__class__.__name__)
         self.logger.setLevel(logging.INFO)
-        self.handler = logging.FileHandler('request.log')
+        self.handler = logging.FileHandler('requests.log', mode='a')
         self.form = "%(message)s"
         self.formatter = logging.Formatter(self.form)
         self.handler.setFormatter(self.formatter)
@@ -67,7 +67,7 @@ class OffensiveLanguageMiddleware:
         return response
     
 
-class RolePermissionMiddleware:
+class RolepermissionMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 

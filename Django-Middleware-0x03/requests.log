@@ -1,1 +1,17 @@
-#logs the information on the custom middleware
+2025-07-22 11:41:16.778976 - User: austi - Path: /admin/
+2025-07-22 11:41:16.980522 - User: austi - Path: /favicon.ico
+2025-07-22 11:41:17.870296 - User: austi - Path: /admin/
+2025-07-22 11:41:17.946114 - User: austi - Path: /favicon.ico
+2025-07-22 11:41:18.053549 - User: austi - Path: /admin/
+2025-07-22 11:41:18.138494 - User: austi - Path: /favicon.ico
+2025-07-22 11:41:18.257843 - User: austi - Path: /admin/
+2025-07-22 11:41:18.341427 - User: austi - Path: /favicon.ico
+2025-07-22 11:41:18.445770 - User: austi - Path: /admin/
+2025-07-22 11:41:18.518967 - User: austi - Path: /favicon.ico
+2025-07-22 11:41:53.456446 - User: austi - Path: /admin/
+2025-07-22 11:41:55.516231 - User: austi - Path: /favicon.ico
+2025-07-22 11:42:02.178095 - User: austi - Path: /admin/chats/user/
+2025-07-22 11:42:03.195550 - User: austi - Path: /admin/jsi18n/
+2025-07-22 11:42:09.779917 - User: austi - Path: /admin/
+2025-07-22 11:42:20.019449 - User: austi - Path: /admin/chats/user/ca663a62-9d29-40f4-bdaa-c5a5361d0946/change/
+2025-07-22 11:42:20.527320 - User: austi - Path: /admin/jsi18n/
