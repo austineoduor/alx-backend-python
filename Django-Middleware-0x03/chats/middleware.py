@@ -1,5 +1,5 @@
 import logging
-import datetime, timedelta
+from datetime import datetime, timedelta
 from django.http import HttpResponseForbidden
 
 
@@ -7,12 +7,13 @@ from django.http import HttpResponseForbidden
 class RequestLoggingMiddleware:
     def __init__(self, get_response):
         self.get_response  = get_response
-        self.logger =  logging.getLogger(self.__name__)
-        self.logger.level(logging.INFO)
-        self.handler = logging.FileHandler('resquest.log')
-        self.form = "%message)s"
-        self.formater = logging.formatter(self.form)
-        self.handler.setFormatter(self.formater)
+        self.get_response = get_response
+        self.logger = logging.getLogger(self.__class__.__name__)
+        self.logger.setLevel(logging.INFO)
+        self.handler = logging.FileHandler('request.log')
+        self.form = "%(message)s"
+        self.formatter = logging.Formatter(self.form)
+        self.handler.setFormatter(self.formatter)
         self.logger.addHandler(self.handler)
 
     def __call__(self, request):
