@@ -202,6 +202,12 @@ class MessageHistory(models.Model):
         editable=False,
         default=uuid.uuid4
         )
+    edited_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='User',
+        help_text="The user."
+        )
     message = models.ForeignKey(
         Message,
         related_name='history', 
@@ -210,7 +216,7 @@ class MessageHistory(models.Model):
     content = models.TextField(
         help_text="The content of the message."
         )
-    timestamp = models.DateTimeField(
+    edited_at = models.DateTimeField(
         auto_now_add=True
         )
 

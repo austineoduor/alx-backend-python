@@ -11,7 +11,10 @@ def create_message_notification(sender, instance, created, **kwargs):
     Signal handler to create a notification when a new message is saved.
     """
     if created:
-        Notification.objects.create(user=instance.receiver, message=instance)
+        Notification.objects.create(
+            receiving_user=instance.receiver,
+            message=instance
+            )
 
 
 @receiver(pre_save, sender=Message)
@@ -20,6 +23,7 @@ def message_pre_save(sender, instance, **kwargs):
         old_message = Message.objects.get(pk=instance.pk)  # Get the existing message
         if old_message.content != instance.content:
             MessageHistory.objects.create(
+                edited_by=instance.receiver,
                 message=instance,
                 content=old_message.content  # Save the *old* content
             )
