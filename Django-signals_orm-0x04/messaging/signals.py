@@ -1,7 +1,9 @@
 from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
 from django.utils.timezone import now
-from .models import Message,Notification
+from django.db.models.signals import pre_save
+from .models import Message, MessageHistory ,Notification
+
 
 @receiver(post_save, sender=Message)
 def create_message_notification(sender, instance, created, **kwargs):
@@ -10,3 +12,18 @@ def create_message_notification(sender, instance, created, **kwargs):
     """
     if created:
         Notification.objects.create(user=instance.receiver, message=instance)
+
+
+@receiver(pre_save, sender=Message)
+def message_pre_save(sender, instance, **kwargs):
+    try:
+        old_message = Message.objects.get(pk=instance.pk)  # Get the existing message
+        if old_message.content != instance.content:
+            MessageHistory.objects.create(
+                message=instance,
+                content=old_message.content  # Save the *old* content
+            )
+            instance.edited = True  # Set the 'edited' flag
+    except Message.DoesNotExist:
+        # It's a new message, so no history to save yet
+        pass

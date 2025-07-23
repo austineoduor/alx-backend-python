@@ -186,6 +186,33 @@ class Notification(models.Model):
         default=False,
         help_text="Read status."
         )
+    edited = models.BooleanField(
+        default=False,
+        help_text="check if message is edited"
+        )
+        
     def __str__(self):
         return f"Notification for {self.user.username} - Message: {self.message.id}"
     
+
+class MessageHistory(models.Model):
+    messageHistory_id = models.UUIDField(
+        primary_key=True,
+        unique=True,
+        editable=False,
+        default=uuid.uuid4
+        )
+    message = models.ForeignKey(
+        Message,
+        related_name='history', 
+        on_delete=models.CASCADE
+        )
+    content = models.TextField(
+        help_text="The content of the message."
+        )
+    timestamp = models.DateTimeField(
+        auto_now_add=True
+        )
+
+    def __str__(self):
+        return f"History of message {self.message.id} at {self.timestamp}"

@@ -1,6 +1,9 @@
 # from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import Message, Conversation, User, Notification
+from .models import (
+    Message, Conversation,
+    User, Notification, MessageHistory
+    )
 
 # User = get_user_model()  # or Important: Use get_user_model()
 
@@ -28,6 +31,7 @@ class MessageSerializer(serializers.ModelSerializer):
         read_only_fields = ('message_id', 'receiver', 'sender', 'timestamp','message_preview') #send_a is often set automatically
     def get_message_preview(self, obj):
         return obj.all()
+
 
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)  # Nested User serializer
@@ -62,8 +66,18 @@ class CreateMessageSerializer(serializers.ModelSerializer):
         model = Message
         fields = '__all__'
 
+
 class NoficationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
+        field = '__all__'
+        read_only_fields = '__all__'
+
+
+class MessageHistorySerializer(serializers.ModelSerializer):
+    content = serializers.TextField(max_length=500)
+    timestamp = serializers.DateTimeField(read_only=True)
+    class Meta:
+        model = MessageHistory
         field = '__all__'
         read_only_fields = '__all__'
