@@ -33,8 +33,8 @@ class RestrictAccessByTimeMiddleware:
         allowed_start_time = datetime.strptime('21:00', '%H:%M').time()
         allowed_end_time = datetime.strptime('18:00', '%H:%M').time()
 
-        if current_time < allowed_start_time or current_time > allowed_end_time:
-            return HttpResponseForbidden("Access denied. The chat is only available between 9 PM and 6 PM.")
+        if current_time < allowed_start_time and current_time > allowed_end_time:
+            return HttpResponseForbidden(f"Access denied. The chat is only available between 9 PM and 6 PM.")
 
         response = self.get_response(request)
         return response

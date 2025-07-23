@@ -1,15 +1,16 @@
 from django_filters.rest_framework import DjangoFilterBackend
 import django_filters
+from django.contrib.auth.models import User
 from django_filters import rest_framework as filters
 from rest_framework import  filters
-from .models import Users, Message
+from .models import  Message
 # from .serializers import Users, MessageSerializer, ConversationSerializer
 # from typing import List, Dict, Any
 # from rest_framework.response import Response
 
 class MessageFilter(filters.Filterset):
     user = filters.ModelChoiceFilter(
-        queryset = Users.objects.all(),
+        queryset = User.objects.all(),
         field_name = 'sender',
         label = 'Sender'
     )
