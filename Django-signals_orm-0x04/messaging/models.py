@@ -101,7 +101,7 @@ class Conversation(models.Model):
     participants = models.ManyToManyField(
         User,
         related_name='conversations',
-        #help_text="Users participating in this conversation."
+        help_text="Users participating in this conversation."
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -153,7 +153,39 @@ class Message(models.Model):
         )
 
     class Meta:
-        ordering = ['sent_at']
+        ordering = ['timestamp']
+        
     def __str__(self):
-        return f"Message {self.message_id} sent at {self.sent_at} with body: {self.message_body}"
+        info = f"From: {self.sender.username} To: {self.receiver.username}"
+        return f"Message:message_id: {self.message_id} sent at: {self.sent_at} with body: {self.content[:20]} {info}"
 
+class Notification(models.Model):
+    notification_id = models.UUIDField(
+        primary_key=True,
+        unique=True,
+        editable=False,
+        default=uuid.uuid4
+        )
+    receiving_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='User',
+        help_text="The user."
+        )
+    message = models.ForeignKey(
+        Message,
+        on_delete=models.CASCADE,
+        related_name='messages',
+        help_text="The sent message."
+        )
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+        help_text="Timestamp when the message was sent."
+        )
+    is_read = models.BooleanField(
+        default=False,
+        help_text="Read status."
+        )
+    def __str__(self):
+        return f"Notification for {self.user.username} - Message: {self.message.id}"
+    
