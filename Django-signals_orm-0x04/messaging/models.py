@@ -144,10 +144,10 @@ class Message(models.Model):
         related_name='received_by',
         help_text="The user who receives the message."
         )
-    message_body= models.TextField(
+    content= models.TextField(
         help_text="The content of the message."
         )
-    sent_at = models.DateTimeField(
+    timestamp = models.DateTimeField(
         auto_now_add=True,
         help_text="Timestamp when the message was sent."
         )

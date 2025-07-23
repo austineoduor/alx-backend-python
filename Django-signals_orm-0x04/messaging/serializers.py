@@ -19,13 +19,13 @@ class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
     receiver = UserSerializer(read_only=True)
     message_id = serializers.UUIDField(read_only=True)
-    message_body = serializers.CharField(max_length=500)
-    sent_at = serializers.DateTimeField(read_only=True)
+    content = serializers.CharField(max_length=500)
+    timestamp = serializers.DateTimeField(read_only=True)
     message_preview = serializers.SerializerMethodField()
     class Meta:
         model = Message
-        fields = ('message_id','conversation', 'receiver','sender', 'message_body', 'sent_at','message_preview')
-        read_only_fields = ('message_id', 'receiver', 'sender', 'sent_at','message_preview') #send_a is often set automatically
+        fields = ('message_id','conversation', 'receiver','sender', 'content', 'timestamp','message_preview')
+        read_only_fields = ('message_id', 'receiver', 'sender', 'timestamp','message_preview') #send_a is often set automatically
     def get_message_preview(self, obj):
         return obj.all()
 
