@@ -91,7 +91,7 @@ class UserViewSet(viewsets.GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=['delete'])
-    def delete_account(self, request):
+    def delete_user(self, request):
         user = request.user
         with transaction.atomic():
             user.delete()
