@@ -129,10 +129,12 @@ class ThreadedMessageViewSet(viewsets.ReadOnlyModelViewSet):
                 select_related('conversation')
     
 
-class MessageViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated, IsParticipantInConversation]
+class InboxViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = MessageSerializer
 
     def get_queryset(self):
         user = self.request.user
-        return Message.unread_messages.for_user(user).only('message_id', 'sender', 'receiver', 'content', 'timestamp', 'read')
+        # Use only() to load necessary fields only
+        return Message.unread.unread_for(user).only(
+            'message_id', 'sender', 'content', 'timestamp'
+        ).select_related('sender')

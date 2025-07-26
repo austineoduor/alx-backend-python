@@ -247,9 +247,3 @@ class MessageHistory(models.Model):
         return f"History of message: mesaage_id {self.message.id} \
             edited_by: {self.edited_by.username} at: {self.timestamp}"
     
-class UnreadMessagesManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(read=False)
-
-    def for_user(self, user):
-        return self.get_queryset().filter(receiver=user)
