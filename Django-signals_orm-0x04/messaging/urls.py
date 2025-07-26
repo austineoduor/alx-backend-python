@@ -7,6 +7,7 @@ router =routers.DefaultRouter()
 router.register(r'conversations', views.ConversationViewSet, basename='conversation')
 router.register(r'messages', views.MessageViewSet, basename='message')
 router.register(r'user', views.UserViewSet, basename='User')
+router.register(r'Thread', views.ThreadedMessageViewSet, basename='Thread')
 
 #["NestedDefaultRouter"]
 urlpatterns = [

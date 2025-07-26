@@ -16,7 +16,7 @@ from .serializers import (ConversationSerializer,
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
-    permission_classes = [permissions.IsAuthenticated] #Restrict to authenticated users
+    permission_classes = [permissions.IsAuthenticated,IsParticipantInConversation] #Restrict to authenticated users
     search_fields = ["IsAuthenticated", "conversation_id", "Message.objects.filter", "HTTP_403_FORBIDDEN"]
     #filters,
     def get_serializer_class(self):
@@ -49,7 +49,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all().order_by('-timestamp')
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsParticipantInConversation]
     search_fields = ["IsAuthenticated", "conversation_id", "Message.objects.filter", "HTTP_403_FORBIDDEN"]
 
     def get_serializer_class(self):
@@ -62,12 +62,12 @@ class MessageViewSet(viewsets.ModelViewSet):
         Optionally restricts the returned messages to those
         belonging to a conversation the current user is a participant in.
         """
-        user = self.request.user
+        sender = self.request.user
         conversation_id = self.request.query_params.get('conversation_id', None)
         if conversation_id is not None:
             try:
                 conversation = Conversation.objects.get(pk=conversation_id)
-                if user in conversation.participants.all():
+                if sender in conversation.participants.all():
                     return Message.objects.filter(conversation=conversation).\
                         prefetch_related('replies', 'sender', 'receiver').\
                             select_related('conversation')
@@ -76,7 +76,7 @@ class MessageViewSet(viewsets.ModelViewSet):
             except Conversation.DoesNotExist:
                 return Message.objects.none()
 
-        return Message.objects.filter(conversation__participants=user).\
+        return Message.objects.filter(conversation__participants=sender).\
             distinct().prefetch_related('replies', 'sender', 'receiver').\
                 select_related('conversation')
 
@@ -93,7 +93,7 @@ class MessageViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsParticipantInConversation]
 
     @action(detail=False, methods=['delete'])
     def delete_user(self, request):
@@ -106,15 +106,15 @@ class UserViewSet(viewsets.GenericViewSet):
 
 class ThreadedMessageViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = RecursiveReplySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsParticipantInConversation]
 
     def get_queryset(self):
-        user = self.request.user
+        sender = self.request.user
         conversation_id = self.request.query_params.get('conversation_id', None)
         if conversation_id is not None:
             try:
                 conversation = Conversation.objects.get(pk=conversation_id)
-                if user in conversation.participants.all():
+                if sender in conversation.participants.all():
                     return Message.objects.filter(conversation=conversation).\
                         prefetch_related('replies', 'sender', 'receiver').\
                             select_related('conversation')
@@ -123,6 +123,6 @@ class ThreadedMessageViewSet(viewsets.ReadOnlyModelViewSet):
             except Conversation.DoesNotExist:
                 return Message.objects.none()
 
-        return Message.objects.filter(conversation__participants=user).\
+        return Message.objects.filter(conversation__participants=sender).\
             distinct().prefetch_related('replies', 'sender', 'receiver').\
                 select_related('conversation')
