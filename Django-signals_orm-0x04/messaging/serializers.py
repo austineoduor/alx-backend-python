@@ -96,3 +96,20 @@ class MessageHistorySerializer(serializers.ModelSerializer):
         model = MessageHistory
         field = '__all__'
         read_only_fields = '__all__'
+
+class RecursiveReplySerializer(serializers.ModelSerializer):
+    sender = UserSerializer(read_only=True)
+    receiver = UserSerializer(read_only=True)
+    replies = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Message
+        fields = ('message_id', 'sender', 'receiver', 'content', 'timestamp', 'replies')
+
+    def get_replies(self, obj):
+        # Assumes replies are already prefetched
+        return RecursiveReplySerializer(
+            obj.replies.all(), 
+            many=True, 
+            context=self.context
+        ).data

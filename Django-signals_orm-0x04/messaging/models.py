@@ -136,6 +136,14 @@ class Message(models.Model):
         default=uuid.uuid4, 
         editable=False
         )
+    parent_message = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='replies',
+        on_delete=models.CASCADE,
+        help_text="If this message is a reply, points to the parent message."
+    )
     conversation = models.ForeignKey(
         Conversation,
         on_delete=models.CASCADE,

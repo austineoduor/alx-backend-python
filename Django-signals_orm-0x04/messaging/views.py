@@ -9,7 +9,8 @@ from .models import  Conversation, Message, User
 from .serializers import (ConversationSerializer,
                           MessageSerializer,
                           CreateConversationSerializer,
-                          CreateMessageSerializer
+                          CreateMessageSerializer,
+                          RecursiveReplySerializer
                           )
 
 class ConversationViewSet(viewsets.ModelViewSet):
@@ -62,18 +63,22 @@ class MessageViewSet(viewsets.ModelViewSet):
         belonging to a conversation the current user is a participant in.
         """
         user = self.request.user
-        conversation_id = self.request.query_params.get('conversation', None)
+        conversation_id = self.request.query_params.get('conversation_id', None)
         if conversation_id is not None:
             try:
                 conversation = Conversation.objects.get(pk=conversation_id)
-                if user in conversation.participants.all(): #Added check to ensure user is part of conversation
-                   return Message.objects.filter(conversation=conversation)
+                if user in conversation.participants.all():
+                    return Message.objects.filter(conversation=conversation).\
+                        prefetch_related('replies', 'sender', 'receiver').\
+                            select_related('conversation')
                 else:
-                   return Message.objects.none() # Return empty queryset if user not in conversation
+                    return Message.objects.none()
             except Conversation.DoesNotExist:
-                return Message.objects.none() # Return empty queryset if conversation does not exist
+                return Message.objects.none()
 
-        return Message.objects.filter(conversation__participants=user).distinct()
+        return Message.objects.filter(conversation__participants=user).\
+            distinct().prefetch_related('replies', 'sender', 'receiver').\
+                select_related('conversation')
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -97,3 +102,27 @@ class UserViewSet(viewsets.GenericViewSet):
             user.delete()
         return Response({"detail": "Your account and associated data were deleted permanently."},
                         status=status.HTTP_204_NO_CONTENT)
+    
+
+class ThreadedMessageViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = RecursiveReplySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        conversation_id = self.request.query_params.get('conversation_id', None)
+        if conversation_id is not None:
+            try:
+                conversation = Conversation.objects.get(pk=conversation_id)
+                if user in conversation.participants.all():
+                    return Message.objects.filter(conversation=conversation).\
+                        prefetch_related('replies', 'sender', 'receiver').\
+                            select_related('conversation')
+                else:
+                    return Message.objects.none()
+            except Conversation.DoesNotExist:
+                return Message.objects.none()
+
+        return Message.objects.filter(conversation__participants=user).\
+            distinct().prefetch_related('replies', 'sender', 'receiver').\
+                select_related('conversation')
