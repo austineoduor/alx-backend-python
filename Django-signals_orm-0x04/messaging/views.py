@@ -1,6 +1,8 @@
 #from django.contrib.auth import get_user_model
 from rest_framework import status
 from django.db import transaction
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework.decorators import action
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
@@ -90,6 +92,10 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)  # Auto-assign sender to current user
+
+    @method_decorator(cache_page(60), name='list')
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class UserViewSet(viewsets.GenericViewSet):
