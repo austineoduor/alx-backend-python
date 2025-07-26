@@ -135,6 +135,6 @@ class InboxViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         user = self.request.user
         # Use only() to load necessary fields only
-        return Message.unread.unread_for(user).only(
+        return Message.unread.unread_for_user(user).only(
             'message_id', 'sender', 'content', 'timestamp'
         ).select_related('sender')

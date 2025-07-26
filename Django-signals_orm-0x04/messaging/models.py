@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser     #Group, Permission
 from django.db import models
 import uuid
+from .managers import UnreadMessagesManager
 
 class User(AbstractUser):
     """
@@ -165,14 +166,16 @@ class Message(models.Model):
     content= models.TextField(
         help_text="The content of the message."
         )
-    read = models.BooleanField(
-        default=False,
+    read= models.BooleanField(
+        default=True,
         help_text="Has the receiver read this message?"
         )
     timestamp = models.DateTimeField(
         auto_now_add=True,
         help_text="Timestamp when the message was sent."
         )
+    objects = models.Manager()
+    unread = UnreadMessagesManager()
 
     class Meta:
         ordering = ['timestamp']
@@ -181,6 +184,7 @@ class Message(models.Model):
         info = f"From: {self.sender.username} To: {self.receiver.username}"
         return f"Message:message_id: {self.message_id} sent at: {self.sent_at}\
             with body: {self.content[:20]} {info}"
+
 
 class Notification(models.Model):
     notification_id = models.UUIDField(
