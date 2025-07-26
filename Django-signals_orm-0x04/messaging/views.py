@@ -127,3 +127,12 @@ class ThreadedMessageViewSet(viewsets.ReadOnlyModelViewSet):
         return Message.objects.filter(conversation__participants=sender).\
             distinct().prefetch_related('replies', 'sender', 'receiver').\
                 select_related('conversation')
+    
+
+class MessageViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated, IsParticipantInConversation]
+    serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Message.unread_messages.for_user(user).only('message_id', 'sender', 'receiver', 'content', 'timestamp', 'read')

@@ -165,6 +165,10 @@ class Message(models.Model):
     content= models.TextField(
         help_text="The content of the message."
         )
+    read = models.BooleanField(
+        default=False,
+        help_text="Has the receiver read this message?"
+        )
     timestamp = models.DateTimeField(
         auto_now_add=True,
         help_text="Timestamp when the message was sent."
@@ -175,7 +179,8 @@ class Message(models.Model):
         
     def __str__(self):
         info = f"From: {self.sender.username} To: {self.receiver.username}"
-        return f"Message:message_id: {self.message_id} sent at: {self.sent_at} with body: {self.content[:20]} {info}"
+        return f"Message:message_id: {self.message_id} sent at: {self.sent_at}\
+            with body: {self.content[:20]} {info}"
 
 class Notification(models.Model):
     notification_id = models.UUIDField(
@@ -241,3 +246,10 @@ class MessageHistory(models.Model):
     def __str__(self):
         return f"History of message: mesaage_id {self.message.id} \
             edited_by: {self.edited_by.username} at: {self.timestamp}"
+    
+class UnreadMessagesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(read=False)
+
+    def for_user(self, user):
+        return self.get_queryset().filter(receiver=user)

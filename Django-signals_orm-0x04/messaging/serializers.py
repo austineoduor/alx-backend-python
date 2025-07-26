@@ -28,6 +28,7 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         fields = ('message_id','parent_message', 'content', 'receiver','sender','timestamp','message_preview')
         read_only_fields = fields #timestamp is often set automatically
+        
     def get_message_preview(self, obj):
         text = obj.content or ""
         return text[:100] + ("…" if len(text) > 100 else "")
