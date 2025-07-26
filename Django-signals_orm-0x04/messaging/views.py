@@ -61,6 +61,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         """
         Optionally restricts the returned messages to those
         belonging to a conversation the current user is a participant in.
+        sender= request.user
         """
         sender = self.request.user
         conversation_id = self.request.query_params.get('conversation_id', None)
