@@ -23,7 +23,7 @@ def message_pre_save(sender, instance, **kwargs):
         old_message = Message.objects.get(pk=instance.pk)  # Get the existing message
         if old_message.content != instance.content:
             MessageHistory.objects.create(
-                edited_by=instance.receiver,
+                edited_by=instance.sender,
                 message=instance,
                 content=old_message.content  # Save the *old* content
             )

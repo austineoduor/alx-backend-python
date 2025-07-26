@@ -22,15 +22,15 @@ class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
     receiver = UserSerializer(read_only=True)
     message_id = serializers.UUIDField(read_only=True)
-    content = serializers.CharField(max_length=500)
     timestamp = serializers.DateTimeField(read_only=True)
     message_preview = serializers.SerializerMethodField()
     class Meta:
         model = Message
-        fields = ('message_id','conversation', 'receiver','sender', 'content', 'timestamp','message_preview')
-        read_only_fields = ('message_id', 'receiver', 'sender', 'timestamp','message_preview') #send_a is often set automatically
+        fields = ('message_id', 'content', 'receiver','sender','timestamp','message_preview')
+        read_only_fields = fields #timestamp is often set automatically
     def get_message_preview(self, obj):
-        return obj.all()
+        text = obj.content or ""
+        return text[:100] + ("…" if len(text) > 100 else "")
 
 
 class ConversationSerializer(serializers.ModelSerializer):
@@ -40,42 +40,57 @@ class ConversationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conversation
         fields = ('conversation_id', 'participants', 'messages', 'created_at', 'updated_at')
-        read_only_fields = ('conversation_id', 'created_at', 'updated_at', 'participants')
+        read_only_fields = fields
 
 
-#Serializers for creating conversations and Messages
+#Serializers for creating conversations
 
 class CreateConversationSerializer(serializers.ModelSerializer):
-    participants = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all())
+    participants = serializers.PrimaryKeyRelatedField(
+        many=True, 
+        queryset=User.objects.all()
+        )
     class Meta:
         model = Conversation
         fields = ('participants',)
 
-    # def create(self, validated_data):
-    #     participants = validated_data.pop('participants')
-    #     conversation = Conversation.objects.create(**validated_data)
-    #     conversation.participants.set(participants)
-    #     conversation.save()
-    #     return conversation
+    def create(self, validated_data):
+        participants = validated_data.pop('participants', [])
+        conversation = Conversation.objects.create()
+        conversation.participants.set(participants)
+        return conversation
 
+    def update(self, instance, validated_data):
+        users = validated_data.get('participants')
+        if users is not None:
+            instance.participants.set(users)
+        instance.save()
+        return instance
 
+#Serializers for creating Messagess
 class CreateMessageSerializer(serializers.ModelSerializer):
-    message_body = serializers.CharField(required=True, help_text="The content of the message.") #added to ensure text is a required field
+    content  = serializers.CharField(required=True, help_text="The content of the message.") #added to ensure text is a required field
 
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = ('__all__')
+
+    def update(self, instance, validated_data):
+        # Only allow editing content field
+        instance.content = validated_data.get('content', instance.content)
+        instance.save()
+        return instance
 
 
 class NoficationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         field = '__all__'
-        read_only_fields = '__all__'
+        read_only_fields = ('__all__',)
 
 
 class MessageHistorySerializer(serializers.ModelSerializer):
-    content = serializers.TextField(max_length=500)
+    content = serializers.CharField(max_length=500)
     timestamp = serializers.DateTimeField(read_only=True)
     class Meta:
         model = MessageHistory

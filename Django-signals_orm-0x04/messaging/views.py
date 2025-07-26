@@ -1,7 +1,11 @@
 #from django.contrib.auth import get_user_model
+from rest_framework import status
+from django.db import transaction
+from rest_framework.decorators import action
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
-from .models import  Conversation, Message
+from .permissions import IsParticipantInConversation
+from .models import  Conversation, Message, User
 from .serializers import (ConversationSerializer,
                           MessageSerializer,
                           CreateConversationSerializer,
@@ -15,7 +19,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     search_fields = ["IsAuthenticated", "conversation_id", "Message.objects.filter", "HTTP_403_FORBIDDEN"]
     #filters,
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action in ['create', 'update', 'partial_update']:
             return CreateConversationSerializer
         return ConversationSerializer
 
@@ -24,19 +28,21 @@ class ConversationViewSet(viewsets.ModelViewSet):
         Optionally restricts the returned conversations to those that
         the current user is a participant in.
         """
-        user = self.request.user
-        return Conversation.objects.filter(participants=user).distinct()
+        return Conversation.objects.filter(participants=self.request.user).distinct()
 
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_create(serializer)
+    #     headers = self.get_success_headers(serializer.data)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
-         serializer.save()  #No need to pass request.user, no modification necessary
+        conv = serializer.save()
+        if self.request.user not in conv.participants.all():
+            conv.participants.add(self.request.user)
+        return conv
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -46,7 +52,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     search_fields = ["IsAuthenticated", "conversation_id", "Message.objects.filter", "HTTP_403_FORBIDDEN"]
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action == ['create', 'update', 'partial_update']:
             return CreateMessageSerializer
         return MessageSerializer
 
@@ -78,3 +84,16 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)  # Auto-assign sender to current user
+
+
+class UserViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=False, methods=['delete'])
+    def delete_account(self, request):
+        user = request.user
+        with transaction.atomic():
+            user.delete()
+        return Response({"detail": "Your account and associated data were deleted permanently."},
+                        status=status.HTTP_204_NO_CONTENT)

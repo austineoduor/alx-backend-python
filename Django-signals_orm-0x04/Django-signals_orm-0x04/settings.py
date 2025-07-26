@@ -53,8 +53,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'messaging.middleware.RequestLoggingMiddleware',
     'messaging.middleware.RestrictAccessByTimeMiddleware',
-    'messaging.middleware.OffensiveLanguageMiddleware',
-    'messaging.middleware.RolepermissionMiddleware',
+    #'messaging.middleware.OffensiveLanguageMiddleware',
+    #'messaging.middleware.RolepermissionMiddleware',
 ]
 
 ROOT_URLCONF = 'Django-signals_orm-0x04.urls'

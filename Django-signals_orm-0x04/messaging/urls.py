@@ -1,15 +1,16 @@
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from rest_framework import routers
 from messaging import views
 
-routers = DefaultRouter()
-routers.register(r'conversations', views.ConversationViewSet, basename='conversation')
-routers.register(r'messages', views.MessageViewSet, basename='message')
+router =routers.DefaultRouter()
+router.register(r'conversations', views.ConversationViewSet, basename='conversation')
+router.register(r'messages', views.MessageViewSet, basename='message')
+router.register(r'user', views.UserViewSet, basename='User')
+
 #["NestedDefaultRouter"]
-#["routers.DefaultRouter()"]
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(routers.urls)),
+    path('api/', include(router.urls)),
     path('api-auth/',include('rest_framework.urls'))
 ]

@@ -115,7 +115,17 @@ class Conversation(models.Model):
     class Meta:
         ordering = ['-updated_at']
     def __str__(self):
-        return f"Conversation between {self.participants.all()} with ID {self.conversation_id}"
+        # Avoid heavy queries in __str__ — grab up to 3 participants for display
+        names = list(self.participants.all().values_list('username', flat=True)[:3])
+        more = self.participants.count() - len(names)
+        display = ", ".join(names) + (f" +{more} more" if more > 0 else "")
+        return f"Participant_Name: {display} - conversation_id: {self.conversation_id}"
+    
+    # If you’d prefer showing all participants:
+
+    # def __str__(self):
+    #     names = ", ".join(self.participants.all().values_list('username', flat=True))
+    #     return f"Conversation ({names}) - {self.conversation_id}"
 
 class Message(models.Model):
     '''
@@ -192,7 +202,7 @@ class Notification(models.Model):
         )
         
     def __str__(self):
-        return f"Notification for {self.user.username} - Message: {self.message.id}"
+        return f"Notification for {self.receiving_user.username} - Message: {self.message.id}"
     
 
 class MessageHistory(models.Model):
@@ -205,7 +215,7 @@ class MessageHistory(models.Model):
     edited_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='User',
+        related_name='Editor',
         help_text="The user."
         )
     message = models.ForeignKey(
@@ -221,4 +231,5 @@ class MessageHistory(models.Model):
         )
 
     def __str__(self):
-        return f"History of message {self.message.id} at {self.timestamp}"
+        return f"History of message: mesaage_id {self.message.id} \
+            edited_by: {self.edited_by.username} at: {self.timestamp}"
