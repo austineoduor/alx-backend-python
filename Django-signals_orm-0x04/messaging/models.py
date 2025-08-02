@@ -61,12 +61,6 @@ class User(AbstractUser):
     #     related_query_name="chats_user",
     # )
 
-    class Meta:
-        verbose_name = "User"
-        verbose_name_plural = "Users"
-
-    def __str__(self):
-        return self.username
 
     # def get_profile_picture_url(self):
     #     """
@@ -91,6 +85,14 @@ class User(AbstractUser):
 #     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
 #     # ... other fields for the profile
 
+    class Meta:
+            verbose_name = "User"
+            verbose_name_plural = "Users"
+
+    def __str__(self):
+            return self.username
+
+
 class Conversation(models.Model):
     """
     Represents a conversation between multiple users.
@@ -101,7 +103,7 @@ class Conversation(models.Model):
         editable=False)
     participants = models.ManyToManyField(
         User,
-        related_name='conversations',
+        related_name='participants',
         help_text="Users participating in this conversation."
     )
     created_at = models.DateTimeField(
@@ -148,13 +150,13 @@ class Message(models.Model):
     conversation = models.ForeignKey(
         Conversation,
         on_delete=models.CASCADE,
-        related_name='messages',
+        related_name='conversations',
         help_text="The conversation this message belongs to."
         )
     sender = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='sent_messages',
+        related_name='sent_by',
         help_text="The user who sent the message."
         )
     receiver = models.ForeignKey(
@@ -196,13 +198,13 @@ class Notification(models.Model):
     receiving_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='User',
+        related_name='recepient',
         help_text="The user."
         )
     message = models.ForeignKey(
         Message,
         on_delete=models.CASCADE,
-        related_name='messages',
+        related_name='message',
         help_text="The sent message."
         )
     timestamp = models.DateTimeField(
@@ -232,7 +234,7 @@ class MessageHistory(models.Model):
     edited_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='Editor',
+        related_name='rewrite',
         help_text="The user."
         )
     message = models.ForeignKey(

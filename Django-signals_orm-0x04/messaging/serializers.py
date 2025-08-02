@@ -10,25 +10,36 @@ from .models import (
 #["serializers.SerializerMethodField()", "serializers.ValidationError"]
 
 class UserSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(max_length=255, required=False)
-    last_name = serializers.CharField(max_length=255, required=False)
+    first_name = serializers.CharField(max_length=255, required=False, read_only=True)
+    last_name = serializers.CharField(max_length=255, required=False, read_only=True)
     class Meta:
         model = User
-        fields = ('user_id', 'username', 'email', 'first_name', 'phone_number', 'password', 'last_name')
-        read_only_fields = ('user_id',)  # Prevent ID modification
+        fields = ('user_id', 'username', 'email', 'first_name',
+                  'phone_number', 'password', 'last_name'
+                  )
+        read_only_fields = ('user_id','password','phone_number',\
+                            'last_name','first_name',
+                            )  # Prevent ID modification
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    sender = UserSerializer(read_only=True)
-    receiver = UserSerializer(read_only=True)
+    sender = UserSerializer(read_only=False)
+    receiver = UserSerializer(read_only=False)
     message_id = serializers.UUIDField(read_only=True)
     timestamp = serializers.DateTimeField(read_only=True)
-    message_preview = serializers.SerializerMethodField()
+    message_preview = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Message
-        fields = ('message_id','parent_message', 'content', 'receiver','sender','timestamp','message_preview')
-        read_only_fields = fields #timestamp is often set automatically
-        
+        fields = ('message_id','parent_message','content','sender',\
+                  'read',  'conversation', 'receiver',
+                  'timestamp','message_preview'
+                  )
+        read_only_fields = ('parent_message','message_id',\
+                            'timestamp', 'message_preview',
+                            'read'
+                            ) 
+
     def get_message_preview(self, obj):
         text = obj.content or ""
         return text[:100] + ("…" if len(text) > 100 else "")
