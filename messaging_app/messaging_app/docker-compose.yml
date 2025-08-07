@@ -1,8 +1,8 @@
-version: "3.9"  # Use a compatible Compose file version
+version: "23.0.1"  # Use a compatible Compose file version
 services:
   web:
     build: .  # Assumes Dockerfile is in the root of the project
-    command: python3 manage.py runserver
+    command: ./wait-for-it.sh -t 300 db:3306 && python3 manage.py runserver
     volumes:
       - .:/app
     ports:
@@ -19,7 +19,7 @@ services:
   db:
     image: mysql:8.0 # Or your preferred MySQL version
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      #MYSQL_ROOT_HOST : %
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DB: ${MYSQL_DB}

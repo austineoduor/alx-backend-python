@@ -6,7 +6,8 @@ WORKDIR /app
 
 # Copy the requirements file into the container at /app
 COPY requirements.txt /app/
-
+# Udating pip
+RUN pip install --upgrade pip
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -21,7 +22,8 @@ EXPOSE 8000
 # ENV DJANGO_SETTINGS_MODULE=your_project.settings
 
 # Run migrations
-RUN python manage.py migrate
+RUN  python manage.py makemigrations
+RUN  python manage.py migrate
 
 # Start the Django development server (you might need to adjust the command for production)
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
