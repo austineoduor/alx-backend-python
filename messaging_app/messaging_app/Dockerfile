@@ -3,7 +3,8 @@ FROM python:3.10
 
 # Set the working directory to /app
 WORKDIR /app
-
+#installing wrk
+RUN sudo apt-get install -y build-essential libssl-dev git wrk
 # Copy the requirements file into the container at /app
 COPY requirements.txt /app/
 # Udating pip

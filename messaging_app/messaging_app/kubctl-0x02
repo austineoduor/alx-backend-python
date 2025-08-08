@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+NAMESPACE="default"
+SERVICE="messaging-app-service"
+
+echo "Deploying blue version..."
+kubectl apply -f blue_deployment.yaml -n "$NAMESPACE"
+
+echo "Deploying green version..."
+kubectl apply -f green_deployment.yaml -n "$NAMESPACE"
+
+echo "Deploying service (routing to blue)..."
+kubectl apply -f kubeservice.yaml -n "$NAMESPACE"
+
+echo "Waiting for green rollout to complete..."
+kubectl rollout status deployment/messaging_app-green -n "$NAMESPACE"
+
+echo "Checking green logs for errors..."
+kubectl logs -l app=messaging_app,version=green -n "$NAMESPACE"
+
+echo "Switching service to green..."
+kubectl patch svc "$SERVICE" -n "$NAMESPACE" \
+  -p "{\"spec\": {\"selector\": {\"app\": \"messaging_app\", \"version\": \"green\"}}}"
+
+echo "Service now routes to green. Monitoring green logs..."
+kubectl logs -f -l app=messaging_app,version=green -n "$NAMESPACE"
+
+echo "Deployment complete. To rollback, patch service back to version: blue."

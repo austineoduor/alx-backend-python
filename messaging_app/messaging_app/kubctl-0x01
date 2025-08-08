@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Script: kubctl-0x01
+# Purpose: Scale messaging_app deployment, verify pods, load test with wrk, monitor resources
+set -euo pipefail
+
+DEPLOYMENT="messaging_app"
+NAMESPACE="default"
+REPLICAS=3
+APP_LABEL="app=messaging_app"
+SERVICE_URL="http://$(kubectl get service ${DEPLOYMENT}-service -n ${NAMESPACE} -o jsonpath='{.spec.clusterIP}')/"
+
+echo "Scaling deployment '$DEPLOYMENT' to $REPLICAS replicas..."
+kubectl scale deployment/"$DEPLOYMENT" --replicas="$REPLICAS" -n "$NAMESPACE"
+echo "Waiting for rollout to complete..."
+kubectl rollout status deployment/"$DEPLOYMENT" -n "$NAMESPACE"
+
+echo "Listing pods now running:"
+kubectl get pods -l "$APP_LABEL" -n "$NAMESPACE"
+
+echo "Running load test with wrk:"
+# Ensure you have wrk installed and accessible
+wrk -t2 -c20 -d30s "$SERVICE_URL"
+
+echo "Load testing complete."
+
+echo "Resource usage (ensure Metrics Server is installed):"
+echo "- Pod-level usage:"
+kubectl top pods -n "$NAMESPACE" -l "$APP_LABEL"
+echo "- Node-level usage:"
+kubectl top nodes
