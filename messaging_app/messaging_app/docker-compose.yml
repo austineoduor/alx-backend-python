@@ -11,7 +11,7 @@ services:
       - db
     environment:
       DJANGO_SETTINGS_MODULE: messaging_app.settings
-      MYSQL_HOST: db # Service name resolves to the DB container's IP
+      MYSQL_HOST: ${MYSQL_HOST} # Service name resolves to the DB container's IP
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DB: ${MYSQL_DB}
