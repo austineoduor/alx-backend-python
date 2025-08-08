@@ -81,7 +81,7 @@ class Conversation(models.Model):
         editable=False)
     participants = models.ManyToManyField(
         User,
-        related_name='conversations',
+        related_name='participants',
         help_text="Users participating in this conversation."
     )
     created_at = models.DateTimeField(
