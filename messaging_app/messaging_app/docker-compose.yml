@@ -17,12 +17,13 @@ services:
       MYSQL_HOST: ${MYSQL_HOST} # Service name resolves to the DB container's IP
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD : ${MYSQL_ROOT_PASSWORD}
       MYSQL_DB: ${MYSQL_DB}
 
   db:
     image: mysql:8.0 # Or your preferred MySQL version
     environment:
-      # MYSQL_ROOT_PASSWORD : ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD : ${MYSQL_ROOT_PASSWORD}
       # MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DB: ${MYSQL_DB}
