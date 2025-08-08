@@ -8,7 +8,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DJANGO_SETTINGS_MODULE: messaging_app.settings
       MYSQL_HOST: ${MYSQL_HOST} # Service name resolves to the DB container's IP
