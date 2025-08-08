@@ -2,3 +2,4 @@
 sudo systemctl enable docker --now
 sudo minikube start
 kubectl cluster-info
+kubectl get pods
