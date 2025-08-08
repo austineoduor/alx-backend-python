@@ -19,7 +19,7 @@ services:
   db:
     image: mysql:8.0 # Or your preferred MySQL version
     environment:
-      #MYSQL_ROOT_HOST : %
+      MYSQL_ROOT_PASSWORD : ${MYSQL_ROOT_PASSWORD}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DB: ${MYSQL_DB}
