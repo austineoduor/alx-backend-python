@@ -2,7 +2,9 @@
 services:
   web:
     build: .  # Assumes Dockerfile is in the root of the project ./wait-for-it.sh -t 300 db:3306 &&
-    command: ./wait-for-it.sh -t 300 db:3306 &&python3 manage.py runserver
+    command: /bin/sh -c "./wait-for-it.sh -t 300 db:3306 --strick-- \
+      &&python3 manage.py runserver && python manage.py makemigrations\
+      && python manage.py migrate"
     volumes:
       - .:/app
     ports:
