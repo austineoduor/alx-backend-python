@@ -3,7 +3,8 @@ services:
   web:
     build: .  # Assumes Dockerfile is in the root of the project ./wait-for-it.sh -t 300 db:3306 &&
     command: /bin/sh -c "./wait-for-it.sh -t 300 db:3306 --strict -- \
-      &&python3 manage.py runserver && python manage.py makemigrations\
+      && mysql -h db -u root -p${MYSQL_ROOT_PASSWORD} -e 'CREATE DATABASE IF NOT EXISTS ${MYSQL_DB};'
+      && python3 manage.py runserver && python manage.py makemigrations\
       && python manage.py migrate"
     volumes:
       - .:/app
