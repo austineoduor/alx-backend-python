@@ -1,0 +1,44 @@
+pipeline {
+    agent any  // Use any available agent (Jenkins node)
+
+    environment {
+        //Define variable for the Pytest workspace
+        PYTEST_WORKSPACE = 'test'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git credentialsId: 'github-token', url: 'https://github.com/austineoduor/alx-backend-python.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt' // Adjust if your requirements file is named differently
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh "pytest ${PYTEST_WORKSPACE} --junitxml=report.xml"
+            }
+        }
+
+        stage('Publish Test Report') {
+            steps {
+                junit 'report.xml'  // Publish JUnit-style test report
+            }
+            
+        }
+    }
+    
+}
+post {
+        success {
+            echo 'All tests passed!'
+        }
+        failure {
+            echo 'Tests failed — take a look!'
+        }
+    }
