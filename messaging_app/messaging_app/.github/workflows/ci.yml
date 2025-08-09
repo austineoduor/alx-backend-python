@@ -27,7 +27,30 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y mysql-client
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --exclude=migrations --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=migrations
 
+    - name: Test with pytest
+      run: |
+        pytest --cov=. --cov-report xml  # Generate coverage data
+
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}  #Optional: Upload coverage reports to codecov
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+    - name: Upload coverage reports to Github
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage.xml
     - name: Start MySQL
       run: |
         sudo systemctl start mysql
