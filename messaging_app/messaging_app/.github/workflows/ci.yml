@@ -36,8 +36,8 @@ jobs:
 
     - name: Setup Database for Testing
       run: |
-        mysql -u root -e "CREATE DATABASE IF NOT EXISTS test_db;"
-        mysql -u root -e "GRANT ALL PRIVILEGES ON test_db.* TO 'django'@'localhost' IDENTIFIED BY 'password';"
+        mysql -u root -e "CREATE DATABASE IF NOT EXISTS db;"
+        mysql -u root -e "GRANT ALL PRIVILEGES ON db.* TO 'django'@'localhost' IDENTIFIED BY 'kali;"
         mysql -u root -e "FLUSH PRIVILEGES;"
 
     - name: Configure Django Settings for Testing
@@ -45,11 +45,11 @@ jobs:
         echo "DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.mysql',
-                'NAME': 'test_db',
-                'USER': 'django',
-                'PASSWORD': 'password',
-                'HOST': 'localhost',
-                'PORT': '3306',
+                'MYSQL_DB':'ALX_prodev'
+                'MYSQL_USER'='root'
+                'MYSQL_PASSWORD':'kali'
+                'MYSQL_HOST':'db'
+                'MYSQL_ROOT_PASSWORD':'kali'
             }
         }" > settings_test.py
         echo "from .settings import * \nfrom .settings_test import *" >> myproject/settings.py #Replace myproject with your project name
