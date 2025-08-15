@@ -1,0 +1,28 @@
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Deploy updated blue_deployment.yaml
+        run: |
+          kubectl apply -f blue_deployment.yaml
+          timeout=60s
+          if ! kubectl rollout status deployment/messaging_app --timeout="$timeout"; then
+            echo "Rollout failed—triggering rollback."
+            kubectl rollout undo deployment/messaging_app
+            exit 1
+          fi
+
+      - name: Health check loop
+        run: |
+          for i in {1..30}; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" $APP_URL) || status="000"
+            echo "Attempt $i: HTTP $status"
+            if [ "$status" != "200" ]; then
+              echo "Failure detected—rolling back."
+              kubectl rollout undo deployment/messaging_app
+              exit 1
+            fi
+            sleep 2
+          done
